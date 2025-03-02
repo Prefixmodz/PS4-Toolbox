@@ -59,14 +59,5 @@ namespace PS4_Toolbox.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 0.0.0.0.
-        /// </summary>
-        internal static string ConsoleIP {
-            get {
-                return ResourceManager.GetString("ConsoleIP", resourceCulture);
-            }
-        }
     }
 }
