@@ -50,6 +50,8 @@
             this.ProcessPath = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BoxConsoleIP = new System.Windows.Forms.TextBox();
             this.BtnConnect = new System.Windows.Forms.Button();
+            this.StatusLabel = new System.Windows.Forms.Label();
+            this.CurrentProcessLabel = new System.Windows.Forms.Label();
             this.TabControl.SuspendLayout();
             this.ModulesPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ModuleGridView)).BeginInit();
@@ -296,12 +298,36 @@
             this.BtnConnect.UseVisualStyleBackColor = true;
             this.BtnConnect.Click += new System.EventHandler(this.BtnConnect_Click);
             // 
+            // StatusLabel
+            // 
+            this.StatusLabel.AutoSize = true;
+            this.StatusLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.StatusLabel.ForeColor = System.Drawing.Color.White;
+            this.StatusLabel.Location = new System.Drawing.Point(4, 451);
+            this.StatusLabel.Name = "StatusLabel";
+            this.StatusLabel.Size = new System.Drawing.Size(47, 16);
+            this.StatusLabel.TabIndex = 3;
+            this.StatusLabel.Text = "Status:";
+            // 
+            // CurrentProcessLabel
+            // 
+            this.CurrentProcessLabel.AutoSize = true;
+            this.CurrentProcessLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CurrentProcessLabel.ForeColor = System.Drawing.Color.White;
+            this.CurrentProcessLabel.Location = new System.Drawing.Point(334, 451);
+            this.CurrentProcessLabel.Name = "CurrentProcessLabel";
+            this.CurrentProcessLabel.Size = new System.Drawing.Size(60, 16);
+            this.CurrentProcessLabel.TabIndex = 4;
+            this.CurrentProcessLabel.Text = "Process:";
+            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.ClientSize = new System.Drawing.Size(675, 448);
+            this.ClientSize = new System.Drawing.Size(675, 471);
+            this.Controls.Add(this.CurrentProcessLabel);
+            this.Controls.Add(this.StatusLabel);
             this.Controls.Add(this.BtnConnect);
             this.Controls.Add(this.BoxConsoleIP);
             this.Controls.Add(this.TabControl);
@@ -345,6 +371,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ProcessTitleID;
         private System.Windows.Forms.DataGridViewTextBoxColumn ProcessContentID;
         private System.Windows.Forms.DataGridViewTextBoxColumn ProcessPath;
+        private System.Windows.Forms.Label StatusLabel;
+        private System.Windows.Forms.Label CurrentProcessLabel;
     }
 }
 

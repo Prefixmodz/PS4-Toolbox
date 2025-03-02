@@ -3,6 +3,7 @@ using System;
 using System.Windows.Forms;
 using libframe4;
 using System.IO;
+using System.Drawing;
 
 namespace PS4_Toolbox
 {
@@ -46,14 +47,11 @@ namespace PS4_Toolbox
             BtnBrowse.Enabled = false;
             BtnBrowse.Visible = false;
             LoadSettings();
-            PS4 = new FRAME4(BoxConsoleIP.Text);
         }
 
         private void Main_Close(object sender, FormClosingEventArgs e)
         {
             SaveSettings();
-            if (PS4.IsConnected)
-                PS4.Disconnect();
         }
 
         void RefreshModules()
@@ -93,6 +91,8 @@ namespace PS4_Toolbox
                     {
                         ProcessInfo = PS4.GetProcessInfo(ProcessList.processes[i].pid);
 
+
+
                         string name = ProcessInfo.name;
                         string id = ProcessInfo.pid.ToString();
                         string titleId = ProcessInfo.titleid;
@@ -100,6 +100,21 @@ namespace PS4_Toolbox
                         string path = ProcessInfo.path;
 
                         ProcessesGridView.Rows.Add(new object[] { name, id, titleId, contentId, path });
+
+                        ProcessesGridView.Rows[0].Selected = false;
+
+                        if (ProcessInfo.name.Contains("default"))
+                        {
+                            int index = i;
+                            ProcessesGridView.Rows[index].DefaultCellStyle.ForeColor = Color.Purple;
+                            ProcessesGridView.Rows[index].Selected = true;
+                        }
+                        else if (ProcessInfo.name.Contains("eboot"))
+                        {
+                            int index = i;
+                            ProcessesGridView.Rows[index].DefaultCellStyle.ForeColor = Color.Purple;
+                            ProcessesGridView.Rows[index].Selected = true;
+                        }
                     }
                 }
             }
@@ -108,15 +123,16 @@ namespace PS4_Toolbox
         private void BtnConnect_Click(object sender, EventArgs e)
         {
             // need to send frame4 payload here, so we dont have to rely on third party applications
-            if (!PS4.IsConnected)
+            PS4 = new FRAME4(BoxConsoleIP.Text);
+            try
             {
                 PS4.Connect();
-                BtnConnect.Text = "Disconnect";
+                StatusLabel.Text = "Status: Connected";
             }
-            else
+            catch (Exception ex)
             {
-                PS4.Disconnect();
-                BtnConnect.Text = "Connect";
+                StatusLabel.Text = "Status: Failed To Connect!";
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -124,6 +140,7 @@ namespace PS4_Toolbox
         {
             int pid = Convert.ToInt32(ProcessesGridView.Rows[ProcessesGridView.CurrentCell.RowIndex].Cells[1].Value);
             CurrentProcessID = pid;
+            CurrentProcessLabel.Text = "Process: " + PS4.GetProcessInfo(CurrentProcessID).name + " TitleID: " + PS4.GetProcessInfo(CurrentProcessID).titleid;
             RefreshModules();
         }
 
@@ -157,7 +174,6 @@ namespace PS4_Toolbox
                     if (LoadModule(BoxModulePath.Text) != 0)
                     {
                         RefreshModules();
-                        MessageBox.Show(modulename + "Loaded!");
                     }
                 }
             }
@@ -169,7 +185,7 @@ namespace PS4_Toolbox
 
         private void BtnUnloadModule_Click(object sender, EventArgs e)
         {
-            int prxhandle = Convert.ToInt32(ModuleGridView.Rows[ModuleGridView.CurrentCell.RowIndex].Cells[1].Value);
+            int prxhandle = Convert.ToInt32(ModuleGridView.Rows[ModuleGridView.CurrentCell.RowIndex].Cells[1].Value.ToString(), 16);
             CurrentPrxHandle = prxhandle;
             UnloadModule(CurrentPrxHandle);
             RefreshModules();
