@@ -149,24 +149,47 @@ namespace PS4_Toolbox
             RefreshProcesses();
         }
 
-        void LoadModule(string path)
+        int GetOldModuleHandle(string cmp)
         {
+            int OldHandle = -1;
             ModuleList = PS4.GetModuleList(CurrentProcessID);
-
             for (int i = 0; i < ModuleList.entries.Length; i++)
             {
-                if (ModuleList.entries[i].name == Path.GetFileName(path))
+                if (ModuleList.entries[i].name == cmp)
                 {
-                    int oldHandle = i;
-                    UnloadModule(Convert.ToInt32(ModuleList.entries[oldHandle].handle.ToString(), 16));
-                    PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
-                }
-                else
-                {
-                    PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
+                    OldHandle = i;
                 }
             }
+            return Convert.ToInt32(ModuleList.entries[OldHandle].handle.ToString("X"), 16);
+        }
 
+        int IsModuleLoaded(string cmp)
+        {
+            int result = -1;
+            ModuleList = PS4.GetModuleList(CurrentProcessID);
+            for (int i = 0; i < ModuleList.entries.Length; i++)
+            {
+                if (ModuleList.entries[i].name == cmp)
+                {
+                    result = i;
+                }
+
+            }
+            return result;
+        }
+
+        void LoadModule(string path)
+        {
+            string name = Path.GetFileName(path);
+            if (IsModuleLoaded(name) != -1)
+            {
+                UnloadModule(GetOldModuleHandle(name));
+                PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
+            }
+            else
+            {
+                PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
+            }
         }
 
         void UnloadModule(int handle)
@@ -187,6 +210,7 @@ namespace PS4_Toolbox
                 else
                 {
                     LoadModule(modulepath);
+                    RefreshModules();
                 }
             }
             catch (Exception ex)
