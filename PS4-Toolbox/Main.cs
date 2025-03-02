@@ -149,9 +149,24 @@ namespace PS4_Toolbox
             RefreshProcesses();
         }
 
-        int LoadModule(string path)
+        void LoadModule(string path)
         {
-            return PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
+            ModuleList = PS4.GetModuleList(CurrentProcessID);
+
+            for (int i = 0; i < ModuleList.entries.Length; i++)
+            {
+                if (ModuleList.entries[i].name == Path.GetFileName(path))
+                {
+                    int oldHandle = i;
+                    UnloadModule(Convert.ToInt32(ModuleList.entries[oldHandle].handle.ToString(), 16));
+                    PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
+                }
+                else
+                {
+                    PS4.LoadPRX(PS4.GetProcessInfo(CurrentProcessID).name, path);
+                }
+            }
+
         }
 
         void UnloadModule(int handle)
@@ -165,16 +180,13 @@ namespace PS4_Toolbox
             string modulename = Path.GetFileName(modulepath);
             try
             {
-                if (!BoxModulePath.Text.Contains("data"))
+                if (!modulepath.Contains("data"))
                 {
                     // ftp the sprx to the console
                 }
                 else
                 {
-                    if (LoadModule(BoxModulePath.Text) != 0)
-                    {
-                        RefreshModules();
-                    }
+                    LoadModule(modulepath);
                 }
             }
             catch (Exception ex)
